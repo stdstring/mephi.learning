@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+function showuser {
+    echo -n "enter username: "
+    read username
+    finger $username
+}
+
+function adduser {
+    echo -n "enter username: "
+    read username
+    echo -n "enter shell: "
+    read shellpath
+    echo -n "enter expiration date (in YYYY-MM-DD format): "
+    read expirationdate
+    homedir="/home/$username"
+    if [ -d $homedir ]
+    then
+        useradd --shell $shellpath --user-group --expiredate $expirationdate $username
+    else
+        useradd --create-home --shell $shellpath --user-group --expiredate $expirationdate $username
+    fi
+    
+}
+
+function deleteuser {
+    echo -n "enter username: "
+    read username
+    deluser $username
+}
+
+PS3="choose action: "
+echo "available actions:"
+select operation in "show user info" "add user" "delete user"
+do
+    case $operation in
+    "show user info")
+        showuser
+        break
+        ;;
+    "add user")
+        adduser
+        break
+        ;;
+    "delete user")
+        deleteuser
+        break
+        ;;
+    *)
+        echo "unknown action"
+        break
+        ;;
+    esac
+done

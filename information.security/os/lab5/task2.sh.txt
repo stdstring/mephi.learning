@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+echo -n "enter first name: "
+read firstname
+echo -n "enter last name: "
+read lastname
+name="${firstname} ${lastname}"
+if [ "Adam Bond" = "$name" ]
+then
+    echo "Access Granted"
+fi

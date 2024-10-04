@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+IFS=$'\n'
+for username in $(cat /etc/passwd | cut --delimiter=: --fields=1)
+do
+    echo "User: $username"
+done

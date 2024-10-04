@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+echo -n "enter username: "
+read username
+# simple approach, but with possible false positives: grep $username /etc/passwd
+IFS=$'\n'
+for line in $(cat /etc/passwd)
+do
+    name=$(echo $line | cut --delimiter=: --fields=1)
+    if [ $username = "$name" ]
+    then
+        echo $line
+        break
+    fi
+done
