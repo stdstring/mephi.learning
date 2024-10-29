@@ -1,0 +1,33 @@
+@startuml
+start
+:Initialize Software Update;
+if (Has new updates?) then (yes)
+  repeat :DownLoad updates;
+    :Send download request;
+    :Receive download response;
+  repeat while (Error at download and attempts <= max attempts?) is (no)
+  if (New updates available?) then (yes)
+    :Make backups;
+    :Prepare software and hardware;
+    if (Has errors?) then (yes)
+      : Show errors to users;
+      : Remove backup and other auxiliary artifacts;
+    else (no)
+      :Update;
+      if (Has errors?) then (yes)
+        : Show errors to users;
+        : Restore from backups;
+      else (no)
+        : Show info to users;
+        : Remove backup and other auxiliary artifacts;
+      endif
+    endif
+  else (no)
+    : Show error to users;
+  endif
+else (no)
+  : Say bye bye;
+endif
+:Stop Software Update;
+stop
+@enduml

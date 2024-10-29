@@ -1,0 +1,77 @@
+@startuml
+class TaskResult {
+  +returnCode: int
+  +outputData: string
+  +errorData: string
+}
+
+class BaseTask {
+  -name: string
+  -scriptPath: string
+  +executeTask(): TaskResult
+  +shutdownTask(): void
+}
+
+TaskResult "0..1" -- "1" BaseTask : uses >
+
+class PythonSettings {
+  +availableRuntimes: string[]
+  +specificOption1: string
+  +specificOption2: int
+  +encoding: string
+}
+
+class PowershellSettings {
+  +runtime: string
+  +specificOption1: int
+  +specificOption2: bool
+}
+
+class PythonTask extends BaseTask {
+  -setting: PythonSettings
+  -checkRuntime(): CheckStatus
+  +executeTask(): TaskResult
+  +shutdownTask(): void
+}
+
+class PowershellTask extends BaseTask {
+  -setting: PowershellSettings
+  -checkRuntime(): CheckStatus
+  +executeTask(): TaskResult
+  +shutdownTask(): void
+}
+
+PythonTask "1" *-- "1" PythonSettings : consists of >
+PowershellTask "1" *-- "1" PowershellSettings : consists of >
+
+class Executor {
+  -tasks: BaseTask[]
+  -getTaskStatus(taskId: int): TaskStatus
+  +executeTask(): int
+  +shutdownTask(taskId: int): void
+  +getTaskResult(taskId: int): TaskResult
+
+}
+
+Executor "1" o-- "*" BaseTask : contains >
+
+class ExecutorManager {
+  -executors: Executor[]
+  -selectBestExecutor(): Executor
+  +executeTask(): int
+  +shutdownTask(taskId: int): void
+  +getTaskResult(taskId: int): TaskResult
+}
+
+ExecutorManager "1" -- "*" Executor : consists of >
+
+class Coordinator {
+  -executorManager: ExecutorManager
+  +executeTask(): int
+  +shutdownTask(taskId: int): void
+  +getTaskResult(taskId: int): TaskResult
+}
+
+ExecutorManager "1" -- "1" Coordinator : uses >
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+left to right direction
+actor "New User" as NewUser
+actor "System Administrator" as SysAdmin
+actor "Network User" as NetUser
+actor "Security Auditor" as SecAuditor
+actor "System Developer" as SysDev
+actor "External System" as ExtSys
+actor "Trusted External System" as TrustedExtSys
+actor "Guest (unknown) user" as GuestUser
+actor "Hacker" as HackerUser
+
+TrustedExtSys -left-|> GuestUser
+NewUser -left-|> GuestUser
+HackerUser -left-|> GuestUser
+
+SecAuditor -left-|> TrustedExtSys
+SysDev -left-|> TrustedExtSys
+NetUser -left-|> TrustedExtSys
+
+SecAuditor -left-|> NewUser
+SysDev -left-|> NewUser
+NetUser -left-|> NewUser
+
+SysAdmin -left-|> NetUser
+SysAdmin -left-|> SecAuditor
+SysAdmin -left-|> SysDev
+
+rectangle "SecureNet System" {
+ usecase "Registration" as UCRegistration
+ usecase "Monitor Network Traffic" as UCTraffic
+ usecase "Access Management" as UCAccess
+ usecase "Intrusion Detection and Prevention (IDS/IPS)" as UCIDS
+ usecase "Vulnerability Analysis" as UCVuln
+ usecase "Data Encryption" as UCEncrypt
+ usecase "Audit and Logging" as UCAudit
+ usecase "Incident Management" as UCIncident
+ usecase "Generate Security Reports" as UCReports
+ usecase "Review Log Files" as UCLogs
+ usecase "Access to internal resources" as UCInternalAccess
+ usecase "Access to public resources" as UCPublicAccess
+ usecase "Access to honeypot" as UCHoneypotAccess
+}
+
+NewUser --> UCRegistration
+
+SysAdmin --> UCTraffic
+
+NetUser --> UCAccess
+NetUser --> UCEncrypt
+
+SecAuditor --> UCAudit
+SecAuditor --> UCVuln
+
+SysDev --> UCIDS
+SysDev --> UCIncident
+
+ExtSys --> UCReports
+ExtSys --> UCLogs
+
+TrustedExtSys --> UCInternalAccess
+
+GuestUser --> UCPublicAccess
+
+HackerUser --> UCHoneypotAccess
+
+UCReports <.. UCLogs : <<include>>
+UCVuln <.. UCReports : <<extend>>
+UCInternalAccess <.. UCPublicAccess : <<include>>
+@enduml

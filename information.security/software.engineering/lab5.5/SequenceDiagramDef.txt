@@ -1,0 +1,85 @@
+@startuml
+
+actor User
+participant "Update System" as UpdateSystem
+participant "Update Server" as UpdateServer
+participant "Backup System" as BackupSystem
+participant "Host System" as HostSystem
+participant "Log System" as LogSystem
+
+User -> UpdateSystem : Request update
+activate UpdateSystem
+
+UpdateSystem -> LogSystem : Log update request
+activate LogSystem
+deactivate LogSystem
+LogSystem -> UpdateSystem
+
+UpdateSystem -> UpdateServer : Check update existence
+activate UpdateServer
+deactivate UpdateServer
+UpdateServer -> UpdateSystem : Result of check
+
+UpdateSystem -> LogSystem : Log result of check
+activate LogSystem
+deactivate LogSystem
+LogSystem -> UpdateSystem
+
+UpdateSystem -> UpdateServer : Request download of update
+activate UpdateServer
+deactivate UpdateServer
+UpdateServer -> UpdateSystem : Downloaded binary
+
+UpdateSystem -> LogSystem : Log result of download
+activate LogSystem
+deactivate LogSystem
+LogSystem -> UpdateSystem
+
+UpdateSystem -> HostSystem : Stop host system
+activate HostSystem
+deactivate HostSystem
+HostSystem -> UpdateSystem
+
+UpdateSystem -> LogSystem : Log result of host system stop
+activate LogSystem
+deactivate LogSystem
+LogSystem -> UpdateSystem
+
+UpdateSystem -> BackupSystem : Make backup
+activate BackupSystem
+BackupSystem -> HostSystem : Request data for backup
+activate HostSystem
+HostSystem -> BackupSystem : Result data
+deactivate HostSystem
+deactivate BackupSystem
+BackupSystem -> UpdateSystem
+
+UpdateSystem -> LogSystem : Log result of backup
+activate LogSystem
+deactivate LogSystem
+LogSystem -> UpdateSystem
+
+UpdateSystem -> HostSystem : Process update
+activate HostSystem
+deactivate HostSystem
+HostSystem -> UpdateSystem : Finish update
+
+UpdateSystem -> LogSystem : Log result of update
+activate LogSystem
+deactivate LogSystem
+LogSystem -> UpdateSystem
+
+UpdateSystem -> HostSystem : Start host system
+activate HostSystem
+deactivate HostSystem
+HostSystem -> UpdateSystem
+
+UpdateSystem -> LogSystem : Log result of host system start
+activate LogSystem
+deactivate LogSystem
+LogSystem -> UpdateSystem
+
+deactivate UpdateSystem
+UpdateSystem --> User : Update complete 
+
+@enduml

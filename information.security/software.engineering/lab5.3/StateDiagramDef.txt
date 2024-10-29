@@ -1,0 +1,39 @@
+@startuml
+state "SecureNet System" as SecureNet {
+  state "Начало процесса аутентификации" as AuthInit
+  state "Запрос имя пользователя и пароля" as AuthRequest
+  state "Сервер аутентификации" as AuthServer {
+    state "Проверка имя пользователя и пароля" as AuthCheck
+    state "Логирование входа пользователя в систему" as AuthSuccessLog
+    state "Логирование ввода неправильных данных" as AuthFailLog
+    state "Информирование о проблеме в безопасности" as AuthHackAlert
+    state "Проверка даты последнего изменения пароля" as AuthLastDateCheck
+    state "Запрос ввода нового пароля" as AuthNewPasswordRequest
+    state "Запрос данных авторизации" as AuthorizationRequest
+  }
+  state "Успешный вход в систему" as AuthSuccess
+  state "Отказ от входа в систему" as AuthCancel
+  state "Блокировка аккаунта после нескольких неудачных попыток" as AccountBlock
+
+
+  [*] --> AuthInit
+  AuthSuccess --> [*]
+  AuthCancel --> [*]
+  AccountBlock --> [*]
+  AuthInit --> AuthRequest
+  AuthRequest --> AuthServer : Пересылаем данные на сервер аутентификации
+  AuthServer --> AuthCheck
+  AuthCheck --> AuthSuccessLog : Имя пользователя и пароль корректные
+  AuthSuccessLog --> AuthLastDateCheck
+  AuthLastDateCheck --> AuthorizationRequest : Срок жизни пароля не истек
+  AuthLastDateCheck --> AuthNewPasswordRequest : Срок жизни пароля истек
+  AuthNewPasswordRequest --> AuthNewPasswordRequest : Пароль не соответствует ограничениям
+  AuthNewPasswordRequest --> AuthorizationRequest : Пароль соответствует ограничениям
+  AuthorizationRequest --> AuthSuccess
+  AuthCheck --> AuthFailLog : Имя пользователя и пароль некорректные
+  AuthFailLog --> AuthRequest : Еще одна попытка ввода разрешена
+  AuthFailLog --> AuthHackAlert : Превышено количество попыток ввода
+  AuthHackAlert --> AccountBlock : Блокировка пользователя в системе
+  AuthRequest --> AuthCancel : Пользователь отказался от входа в систему 
+}
+@enduml
