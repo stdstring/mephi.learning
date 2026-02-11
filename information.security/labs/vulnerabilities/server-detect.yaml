@@ -1,0 +1,18 @@
+id: lab3-server-detect
+info:
+  name: Lab3 Apache and Nginx server detector
+  author: me
+  severity: info
+  description: Lab3 Apache and Nginx server detector
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    headers:
+      User-Agent: "Nuclei: Apache and Nginx server detector"
+    matchers:
+      - type: word
+        words:
+          - "Server: Apache"
+          - "Server: nginx"
+        part: header

