@@ -1,0 +1,52 @@
+May  6 22:57:13 elk login[657]: pam_unix(login:auth): check pass; user unknown
+May  6 22:57:13 elk login[657]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost= 
+May  6 22:57:16 elk login[657]: FAILED LOGIN (1) on '/dev/ttyS0' FOR 'UNKNOWN', Authentication failure
+May  6 22:57:27 elk login[657]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=user
+May  6 22:57:29 elk login[657]: FAILED LOGIN (2) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 22:57:47 elk login[657]: FAILED LOGIN (3) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 22:57:54 elk login[657]: FAILED LOGIN (4) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 22:58:02 elk login[657]: FAILED LOGIN (5) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 22:58:02 elk login[657]: TOO MANY LOGIN TRIES (5) on '/dev/ttyS0' FOR 'user'
+May  6 22:58:02 elk login[657]: pam_mail(login:session): pam_putenv: delete non-existent entry; MAIL
+May  6 22:58:02 elk login[657]: pam_unix(login:session): session closed for user user
+May  6 22:58:02 elk login[657]: PAM 3 more authentication failures; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=user
+May  6 22:58:02 elk login[657]: PAM service(login) ignoring max retries; 4 > 3
+May  6 22:58:13 elk login[3910]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=user
+May  6 22:58:15 elk login[3910]: FAILED LOGIN (1) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 22:58:23 elk login[3910]: FAILED LOGIN (2) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 22:58:28 elk sshd[2553]: fatal: Timeout before authentication for 172.18.25.3 port 52840
+May  6 22:58:28 elk login[3910]: pam_unix(login:auth): check pass; user unknown
+May  6 22:58:28 elk login[3910]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost= 
+May  6 22:58:31 elk login[3910]: FAILED LOGIN (3) on '/dev/ttyS0' FOR 'UNKNOWN', Authentication failure
+May  6 22:58:43 elk login[3910]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=root
+May  6 22:58:46 elk login[3910]: FAILED LOGIN (4) on '/dev/ttyS0' FOR 'root', Authentication failure
+May  6 22:58:55 elk login[3910]: pam_unix(login:auth): check pass; user unknown
+May  6 22:58:55 elk login[3910]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost= 
+May  6 22:58:57 elk login[3910]: FAILED LOGIN (5) on '/dev/ttyS0' FOR 'UNKNOWN', Authentication failure
+May  6 22:58:57 elk login[3910]: TOO MANY LOGIN TRIES (5) on '/dev/ttyS0' FOR 'UNKNOWN'
+May  6 22:58:57 elk login[3910]: pam_mail(login:session): user unknown
+May  6 22:58:57 elk login[3910]: pam_unix(login:session): session closed for user toor
+May  6 22:58:57 elk login[3910]: PAM 1 more authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=user
+May  6 22:59:10 elk login[4384]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=ubuntu
+May  6 22:59:14 elk login[4384]: FAILED LOGIN (1) on '/dev/ttyS0' FOR 'ubuntu', Authentication failure
+May  6 22:59:41 elk login[4384]: pam_unix(login:auth): check pass; user unknown
+May  6 22:59:41 elk login[4384]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost= 
+May  6 22:59:44 elk login[4384]: FAILED LOGIN (2) on '/dev/ttyS0' FOR 'UNKNOWN', Authentication failure
+May  6 23:00:02 elk sshd[4858]: Accepted publickey for user from 172.18.25.3 port 52858 ssh2: RSA SHA256:K5sW4x709etj5MrHv3wjUtBcKdiZNf1i/nrTD8zDtZE
+May  6 23:00:02 elk sshd[4858]: pam_unix(sshd:session): session opened for user user(uid=1001) by (uid=0)
+May  6 23:00:02 elk systemd-logind[650]: New session 1 of user user.
+May  6 23:00:02 elk systemd: pam_unix(systemd-user:session): session opened for user user(uid=1001) by (uid=0)
+May  6 23:01:31 elk login[5030]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=user
+May  6 23:01:34 elk login[5030]: FAILED LOGIN (1) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 23:01:43 elk login[5030]: FAILED LOGIN (2) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 23:01:52 elk login[5030]: FAILED LOGIN (3) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 23:01:59 elk login[5030]: FAILED LOGIN (4) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 23:02:15 elk login[5030]: FAILED LOGIN (5) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 23:02:15 elk login[5030]: TOO MANY LOGIN TRIES (5) on '/dev/ttyS0' FOR 'user'
+May  6 23:02:15 elk login[5030]: pam_mail(login:session): pam_putenv: delete non-existent entry; MAIL
+May  6 23:02:15 elk login[5030]: pam_unix(login:session): session closed for user user
+May  6 23:02:15 elk login[5030]: PAM 4 more authentication failures; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=user
+May  6 23:02:15 elk login[5030]: PAM service(login) ignoring max retries; 5 > 3
+May  6 23:02:57 elk login[6049]: pam_unix(login:auth): authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/ttyS0 ruser= rhost=  user=user
+May  6 23:03:00 elk login[6049]: FAILED LOGIN (1) on '/dev/ttyS0' FOR 'user', Authentication failure
+May  6 23:03:08 elk login[6049]: FAILED LOGIN (2) on '/dev/ttyS0' FOR 'user', Authentication failure

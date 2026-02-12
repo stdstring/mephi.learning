@@ -1,0 +1,90 @@
+# Nmap 7.94SVN scan initiated Thu Dec 18 21:46:20 2025 as: nmap -p 80,443 -sV --version-intensity 5 -A -iL wb_targets -oN wb_result_scan.txt -oG wb_result_scan.gnmap
+Host: 85.198.77.99 ()	Status: Up
+Host: 85.198.77.99 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 256	IP ID Seq: Busy server or unknown class
+Host: 85.198.79.92 ()	Status: Up
+Host: 85.198.79.92 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 261	IP ID Seq: Busy server or unknown class
+Host: 185.62.202.14 ()	Status: Up
+Host: 185.62.202.14 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 257	IP ID Seq: Busy server or unknown class
+Host: 91.230.107.71 ()	Status: Up
+Host: 91.230.107.71 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 262	IP ID Seq: Busy server or unknown class
+Host: 213.184.159.8 ()	Status: Up
+Host: 213.184.159.8 ()	Ports: 80/filtered/tcp//http///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 252	IP ID Seq: Busy server or unknown class
+Host: 91.230.107.182 (mail.weildberries.ru)	Status: Up
+Host: 91.230.107.182 (mail.weildberries.ru)	Ports: 80/filtered/tcp//http///, 443/filtered/tcp//https///
+Host: 213.184.155.74 ()	Status: Up
+Host: 213.184.155.74 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 262	IP ID Seq: Busy server or unknown class
+Host: 91.230.107.156 (mx.wbteamchat.ru)	Status: Up
+Host: 91.230.107.156 (mx.wbteamchat.ru)	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 258	IP ID Seq: Busy server or unknown class
+Host: 185.62.202.7 ()	Status: Up
+Host: 185.62.202.7 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 250	IP ID Seq: Busy server or unknown class
+Host: 85.198.79.101 ()	Status: Up
+Host: 85.198.79.101 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 257	IP ID Seq: Busy server or unknown class
+Host: 185.62.202.8 ()	Status: Up
+Host: 185.62.202.8 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 248	IP ID Seq: Busy server or unknown class
+Host: 194.1.214.251 ()	Status: Up
+Host: 194.1.214.251 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 258	IP ID Seq: Busy server or unknown class
+Host: 213.184.155.68 ()	Status: Up
+Host: 213.184.155.68 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 261	IP ID Seq: Busy server or unknown class
+Host: 185.62.202.9 ()	Status: Up
+Host: 185.62.202.9 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 259	IP ID Seq: Busy server or unknown class
+Host: 185.62.200.156 ()	Status: Up
+Host: 185.62.200.156 ()	Ports: 80/filtered/tcp//http///, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 260	IP ID Seq: Incremental
+Host: 85.198.79.102 ()	Status: Up
+Host: 85.198.79.102 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 254	IP ID Seq: Incremental
+Host: 194.1.214.98 ()	Status: Up
+Host: 194.1.214.98 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 253	IP ID Seq: Incremental
+Host: 85.198.77.15 ()	Status: Up
+Host: 85.198.77.15 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 258	IP ID Seq: Busy server or unknown class
+Host: 185.138.253.70 ()	Status: Up
+Host: 185.138.253.70 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 253	IP ID Seq: Busy server or unknown class
+Host: 85.198.79.0 ()	Status: Up
+Host: 85.198.79.0 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 261	IP ID Seq: Busy server or unknown class
+Host: 85.198.76.99 ()	Status: Up
+Host: 85.198.76.99 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 261	IP ID Seq: Incremental
+Host: 185.138.255.70 ()	Status: Up
+Host: 185.138.255.70 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 259	IP ID Seq: Busy server or unknown class
+Host: 194.1.214.88 ()	Status: Up
+Host: 194.1.214.88 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 256	IP ID Seq: Busy server or unknown class
+Host: 91.230.107.135 ()	Status: Up
+Host: 91.230.107.135 ()	Ports: 80/filtered/tcp//http///, 443/filtered/tcp//https///
+Host: 185.138.254.19 ()	Status: Up
+Host: 185.138.254.19 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 259	IP ID Seq: Busy server or unknown class
+Host: 213.184.156.20 ()	Status: Up
+Host: 213.184.156.20 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 256	IP ID Seq: Busy server or unknown class
+Host: 194.1.214.6 ()	Status: Up
+Host: 194.1.214.6 ()	Ports: 80/filtered/tcp//http///, 443/filtered/tcp//https///
+Host: 194.1.214.89 ()	Status: Up
+Host: 194.1.214.89 ()	Ports: 80/filtered/tcp//http///, 443/filtered/tcp//https///
+Host: 185.138.253.1 ()	Status: Up
+Host: 185.138.253.1 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 260	IP ID Seq: Busy server or unknown class
+Host: 91.230.107.137 ()	Status: Up
+Host: 91.230.107.137 ()	Ports: 80/filtered/tcp//http///, 443/filtered/tcp//https///
+Host: 85.198.79.99 ()	Status: Up
+Host: 85.198.79.99 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 261	IP ID Seq: Busy server or unknown class
+Host: 185.138.255.1 ()	Status: Up
+Host: 185.138.255.1 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|https?///	Seq Index: 240	IP ID Seq: Incremental
+Host: 185.62.202.14 ()	Status: Up
+Host: 185.62.202.14 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 254	IP ID Seq: Busy server or unknown class
+Host: 85.198.79.101 ()	Status: Up
+Host: 85.198.79.101 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	Seq Index: 250	IP ID Seq: Incremental
+Host: 185.62.202.7 ()	Status: Up
+Host: 185.62.202.7 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 253	IP ID Seq: Busy server or unknown class
+Host: 194.1.214.98 ()	Status: Up
+Host: 194.1.214.98 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 253	IP ID Seq: Busy server or unknown class
+Host: 213.184.159.8 ()	Status: Up
+Host: 213.184.159.8 ()	Ports: 80/filtered/tcp//http///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 262	IP ID Seq: Busy server or unknown class
+Host: 91.230.107.156 (mx.wbteamchat.ru)	Status: Up
+Host: 91.230.107.156 (mx.wbteamchat.ru)	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 257	IP ID Seq: Incremental
+Host: 85.198.79.102 ()	Status: Up
+Host: 85.198.79.102 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 259	IP ID Seq: Incremental
+Host: 185.62.202.8 ()	Status: Up
+Host: 185.62.202.8 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 259	IP ID Seq: Busy server or unknown class
+Host: 213.184.155.74 ()	Status: Up
+Host: 213.184.155.74 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 255	IP ID Seq: Busy server or unknown class
+Host: 85.198.79.101 ()	Status: Up
+Host: 85.198.79.101 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 259	IP ID Seq: Incremental
+Host: 185.62.202.7 ()	Status: Up
+Host: 185.62.202.7 ()	Ports: 80/open/tcp//http?///, 443/open/tcp//ssl|https?///	OS: Actiontec MI424WR-GEN3I WAP|DD-WRT v24-sp2 (Linux 2.4.37)	Seq Index: 259	IP ID Seq: Incremental
+Host: 85.198.79.101 ()	Status: Up
+Host: 85.198.79.101 ()	Ports: 80/open/tcp//http//nginx/, 443/open/tcp//ssl|http//nginx/	OS: Actiontec MI424WR-GEN3I WAP	Seq Index: 252	IP ID Seq: Incremental
+# Nmap done at Thu Dec 18 21:51:02 2025 -- 44 IP addresses (44 hosts up) scanned in 282.36 seconds
