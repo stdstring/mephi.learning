@@ -18,7 +18,9 @@ namespace SourceCodeSimplifierApp.Transformers
                 // other transformers
                 new ObjectInitializerExprTransformer(output, GetTransformerState(ObjectInitializerExprTransformer.Name)),
                 new OutInlineVariableTransformer(output, GetTransformerState(OutInlineVariableTransformer.Name)),
-                new NullConditionalOperatorTransformer(output, GetTransformerState(NullConditionalOperatorTransformer.Name))
+                new NullConditionalOperatorTransformer(output, GetTransformerState(NullConditionalOperatorTransformer.Name)),
+                // special transformers for Python
+                new ForLoopTransformer(output, GetTransformerState(ForLoopTransformer.Name))
             };
         }
     }
