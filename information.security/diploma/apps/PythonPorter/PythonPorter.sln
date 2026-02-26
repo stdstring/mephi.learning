@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37012.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonPorterApp", "PythonPorterApp\PythonPorterApp.csproj", "{E29772F3-DE00-465D-8311-E613590CD037}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonPorterAppTests", "PythonPorterAppTests\PythonPorterAppTests.csproj", "{91D30BFD-155C-4281-B5C2-C2EC6D738DBB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E29772F3-DE00-465D-8311-E613590CD037}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E29772F3-DE00-465D-8311-E613590CD037}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E29772F3-DE00-465D-8311-E613590CD037}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E29772F3-DE00-465D-8311-E613590CD037}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91D30BFD-155C-4281-B5C2-C2EC6D738DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D30BFD-155C-4281-B5C2-C2EC6D738DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D30BFD-155C-4281-B5C2-C2EC6D738DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D30BFD-155C-4281-B5C2-C2EC6D738DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BEF92717-B362-406D-9E38-30E63EA74180}
+	EndGlobalSection
+EndGlobal
