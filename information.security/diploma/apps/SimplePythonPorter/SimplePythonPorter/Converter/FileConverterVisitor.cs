@@ -1,0 +1,33 @@
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SimplePythonPorter.Common;
+using SimplePythonPorter.DestStorage;
+
+namespace SimplePythonPorter.Converter
+{
+    internal class FileConverterVisitor : CSharpSyntaxWalker
+    {
+        public FileConverterVisitor(SemanticModel model, FileStorage currentFile, AppData appData)
+        {
+            _model = model;
+            _currentFile = currentFile;
+            _appData = appData;
+        }
+
+        public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+        {
+            base.VisitClassDeclaration(node);
+        }
+
+        public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
+        {
+            base.VisitMethodDeclaration(node);
+        }
+
+        private readonly SemanticModel _model;
+        private readonly FileStorage _currentFile;
+        private readonly AppData _appData;
+        private ClassStorage? _currentClass;
+    }
+}

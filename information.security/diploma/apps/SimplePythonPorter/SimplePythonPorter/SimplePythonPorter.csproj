@@ -19,8 +19,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.9.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ExperimentExample1\ExperimentExample1.csproj" />
-  </ItemGroup>
-
 </Project>
