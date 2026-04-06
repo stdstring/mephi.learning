@@ -17,17 +17,18 @@ namespace SimplePythonPorter.Converter
 
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            base.VisitClassDeclaration(node);
+            TypeConverterVisitor typeConverter = new TypeConverterVisitor(_model, _currentFile, _appData);
+            typeConverter.Visit(node);
         }
 
-        public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
+        public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
         {
-            base.VisitMethodDeclaration(node);
+            TypeConverterVisitor typeConverter = new TypeConverterVisitor(_model, _currentFile, _appData);
+            typeConverter.Visit(node);
         }
 
         private readonly SemanticModel _model;
         private readonly FileStorage _currentFile;
         private readonly AppData _appData;
-        private ClassStorage? _currentClass;
     }
 }

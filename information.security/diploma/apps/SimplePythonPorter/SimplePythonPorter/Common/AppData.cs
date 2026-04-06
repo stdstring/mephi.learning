@@ -1,6 +1,8 @@
-﻿namespace SimplePythonPorter.Common
+﻿using SimplePythonPorter.Converter;
+
+namespace SimplePythonPorter.Common
 {
     internal record TransformResult(String RelativePath, String Content);
 
-    internal record AppData(IList<TransformResult> Results);
+    internal record AppData(NameTransformer NameTransformer, IList<TransformResult> Results);
 }

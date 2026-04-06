@@ -11,7 +11,6 @@ namespace SimplePythonPorter.Converter
         public FileConverter(AppData appData)
         {
             _appData = appData;
-            _nameTransformer = new NameTransformer();
             _ignoredEntitiesManager = new IgnoredEntitiesManager();
         }
 
@@ -22,7 +21,7 @@ namespace SimplePythonPorter.Converter
             // Restriction for experiment
             if (!_appData.Results.IsEmpty())
                 throw new InvalidOperationException("Unsupported MultiFile project");
-            String destRelativePath = PathTransformer.TransformPath(relativeFilePath, _nameTransformer);
+            String destRelativePath = PathTransformer.TransformPath(relativeFilePath, _appData.NameTransformer);
             FileStorage currentFile = new FileStorage();
             FileConverterVisitor converter = new FileConverterVisitor(model, currentFile, _appData);
             SyntaxNode root = tree.GetRoot();
@@ -37,7 +36,6 @@ namespace SimplePythonPorter.Converter
         }
 
         private readonly AppData _appData;
-        private readonly NameTransformer _nameTransformer;
         private readonly IgnoredEntitiesManager _ignoredEntitiesManager;
     }
 }
