@@ -153,6 +153,8 @@
 
         public void AddMove(Move move)
         {
+            if (move == null)
+                throw new ArgumentNullException("move");
             steps.Add(move);
         }
 
@@ -163,16 +165,22 @@
 
         public void AddColor(Color color)
         {
+            if (color == null)
+                throw new ArgumentNullException("color");
             steps.Add(color);
         }
 
         public void AddColor(String color)
         {
+            if (color == null)
+                throw new ArgumentNullException("color");
             steps.Add(new Color(color));
         }
 
         public void AddPoint(Point point)
         {
+            if (point == null)
+                throw new ArgumentNullException("point");
             steps.Add(point);
         }
 
@@ -183,6 +191,8 @@
 
         public void AddRectangle(Rectangle rectangle)
         {
+            if (rectangle == null)
+                throw new ArgumentNullException("rectangle");
             steps.Add(rectangle);
         }
 
@@ -198,6 +208,8 @@
 
         public void AddCircle(Circle circle)
         {
+            if (circle == null)
+                throw new ArgumentNullException("circle");
             steps.Add(circle);
         }
 
@@ -218,6 +230,8 @@
     {
         public void Paint(IList<Step> steps)
         {
+            if (steps == null)
+                throw new ArgumentNullException("steps");
             foreach (Step step in steps)
             {
                 Console.WriteLine(step.GetRepresentation());
@@ -225,9 +239,9 @@
         }
     }
 
-    internal class Program
+    public class Program
     {
-        static void Main(String[] args)
+        public static void Main(String[] args)
         {
             StepStorage storage = new StepStorage();
             storage.AddMove(3, 5);

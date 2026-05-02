@@ -4,9 +4,10 @@ namespace SimplePythonPorter.DestStorage
 {
     internal class MethodStorage
     {
-        public MethodStorage(String methodName, Int32 indentation, ImportStorage importStorage)
+        public MethodStorage(String methodName, String[] parameters, Int32 indentation, ImportStorage importStorage)
         {
             _methodName = methodName;
+            _parameters = parameters;
             _globalIndentation = indentation;
             ImportStorage = importStorage;
         }
@@ -35,11 +36,13 @@ namespace SimplePythonPorter.DestStorage
                 SaveBorderData(writer, baseIndentation, _headerData);
             foreach (String decorator in _decorators)
                 writer.WriteLine($"{baseIndentation}{decorator}");
-            writer.WriteLine($"{baseIndentation}def {_methodName}(self):");
+            String parametersList = String.Join(", ", _parameters);
+            writer.WriteLine($"{baseIndentation}def {_methodName}({parametersList}):");
             if (_errorReason != null)
             {
                 String errorReason = StringUtils.Escape(_errorReason);
-                writer.WriteLine($"{bodyIndentation}raise NotImplementedError(\"{errorReason}\")");
+                ImportStorage.AddImport("system");
+                writer.WriteLine($"{bodyIndentation}raise system.NotImplementedError(\"{errorReason}\")");
             }
             else
             {
@@ -127,6 +130,7 @@ namespace SimplePythonPorter.DestStorage
         }
 
         private readonly String _methodName;
+        private readonly String[] _parameters;
         private readonly Int32 _globalIndentation;
         private Int32 _localIndentation;
         private readonly IList<String> _headerData = new List<String>();

@@ -60,10 +60,10 @@ namespace SimplePythonPorter.DestStorage
             _baseClasses.Add(baseClass);
         }
 
-        public MethodStorage CreateMethodStorage(String methodName)
+        public MethodStorage CreateMethodStorage(String name, String[] parameters)
         {
             Int32 indentation = _indentation + StorageDef.IndentationDelta;
-            MethodStorage currentMethod = new MethodStorage(methodName, indentation, ImportStorage);
+            MethodStorage currentMethod = new MethodStorage(name, parameters, indentation, ImportStorage);
             _methods.Add(currentMethod);
             return currentMethod;
         }
