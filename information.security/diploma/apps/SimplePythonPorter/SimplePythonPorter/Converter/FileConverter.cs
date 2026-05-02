@@ -22,7 +22,7 @@ namespace SimplePythonPorter.Converter
             if (!_appData.Results.IsEmpty())
                 throw new InvalidOperationException("Unsupported MultiFile project");
             String destRelativePath = PathTransformer.TransformPath(relativeFilePath, _appData.NameTransformer);
-            FileStorage currentFile = new FileStorage();
+            FileStorage currentFile = new FileStorage(StorageDef.DefaultIndentationDelta);
             FileConverterVisitor converter = new FileConverterVisitor(model, currentFile, _appData);
             SyntaxNode root = tree.GetRoot();
             converter.Visit(root);

@@ -2,6 +2,6 @@
 {
     internal static class StorageDef
     {
-        public const Int32 IndentationDelta = 4;
+        public const Int32 DefaultIndentationDelta = 4;
     }
 }

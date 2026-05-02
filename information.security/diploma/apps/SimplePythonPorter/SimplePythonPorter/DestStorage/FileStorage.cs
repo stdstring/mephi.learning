@@ -4,9 +4,10 @@ namespace SimplePythonPorter.DestStorage
 {
     internal class FileStorage
     {
-        public FileStorage()
+        public FileStorage(Int32 indentationDelta)
         {
             _indentation = 0;
+            _indentationDelta = indentationDelta;
             ImportStorage = new ImportStorage();
         }
 
@@ -31,8 +32,8 @@ namespace SimplePythonPorter.DestStorage
 
         public ClassStorage CreateClassStorage(String className)
         {
-            Int32 indentation = _indentation + (_indentation > 0 ? StorageDef.IndentationDelta : 0);
-            ClassStorage classStorage = new ClassStorage(className, indentation, ImportStorage);
+            Int32 indentation = _indentation + (_indentation > 0 ? _indentationDelta : 0);
+            ClassStorage classStorage = new ClassStorage(className, indentation, _indentationDelta, ImportStorage);
             _classes.Add(classStorage);
             return classStorage;
         }
@@ -51,6 +52,7 @@ namespace SimplePythonPorter.DestStorage
         }
 
         private readonly Int32 _indentation;
+        private readonly Int32 _indentationDelta;
         private readonly IList<String> _headerData = new List<String>();
         private readonly IList<ClassStorage> _classes = new List<ClassStorage>();
     }

@@ -4,10 +4,14 @@ namespace SimplePythonPorter.DestStorage
 {
     internal class ClassStorage
     {
-        public ClassStorage(String className, Int32 indentation, ImportStorage importStorage)
+        public ClassStorage(String className,
+                            Int32 indentation,
+                            Int32 indentationDelta,
+                            ImportStorage importStorage)
         {
             _className = className;
             _indentation = indentation;
+            _indentationDelta = indentationDelta;
             ImportStorage = importStorage;
         }
 
@@ -31,7 +35,7 @@ namespace SimplePythonPorter.DestStorage
         public void Save(TextWriter writer)
         {
             String baseIndentation = IndentationUtils.Create(_indentation);
-            String bodyIndentation = IndentationUtils.Create(_indentation + StorageDef.IndentationDelta);
+            String bodyIndentation = IndentationUtils.Create(_indentation + _indentationDelta);
             SaveBorderData(writer, baseIndentation, _headerData);
             foreach (String decorator in _decorators)
                 writer.WriteLine($"{baseIndentation}{decorator}");
@@ -62,8 +66,8 @@ namespace SimplePythonPorter.DestStorage
 
         public MethodStorage CreateMethodStorage(String name, String[] parameters)
         {
-            Int32 indentation = _indentation + StorageDef.IndentationDelta;
-            MethodStorage currentMethod = new MethodStorage(name, parameters, indentation, ImportStorage);
+            Int32 indentation = _indentation + _indentationDelta;
+            MethodStorage currentMethod = new MethodStorage(name, parameters, indentation, _indentationDelta, ImportStorage);
             _methods.Add(currentMethod);
             return currentMethod;
         }
@@ -80,6 +84,7 @@ namespace SimplePythonPorter.DestStorage
 
         private readonly String _className;
         private readonly Int32 _indentation;
+        private readonly Int32 _indentationDelta;
         private readonly IList<String> _headerData = new List<String>();
         private readonly IList<String> _footerData = new List<String>();
         private String _trailingData = String.Empty;

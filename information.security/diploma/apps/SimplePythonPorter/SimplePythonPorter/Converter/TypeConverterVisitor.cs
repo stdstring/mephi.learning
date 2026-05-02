@@ -227,7 +227,7 @@ namespace SimplePythonPorter.Converter
             }
             String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
             methodStorage.AddBodyLine($"if {argumentTypeCheck}:");
-            methodStorage.IncreaseLocalIndentation(StorageDef.IndentationDelta);
+            methodStorage.IncreaseLocalIndentation();
             if (data.Symbol.IsAbstract)
             {
                 methodStorage.ImportStorage.AddImport("system");
@@ -238,7 +238,7 @@ namespace SimplePythonPorter.Converter
                 // process body
                 methodStorage.AddBodyLine("pass");
             }
-            methodStorage.DecreaseLocalIndentation(StorageDef.IndentationDelta);
+            methodStorage.DecreaseLocalIndentation();
         }
 
         private String GenerateArgumentTypeCheck(String parameterName, ITypeSymbol parameterType, MethodStorage methodStorage)
