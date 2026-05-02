@@ -237,6 +237,12 @@ namespace SimplePythonPorter.Converter
             }
             else
             {
+                for (Int32 index = 0; index < data.Symbol.Parameters.Length; ++index)
+                {
+                    IParameterSymbol parameter = data.Symbol.Parameters[index];
+                    String parameterName = _appData.NameTransformer.TransformLocalVariableName(parameter.Name);
+                    methodStorage.AddBodyLine($"{parameterName} = args[{index}]");
+                }
                 // process body
                 methodStorage.AddBodyLine("pass");
             }
@@ -373,6 +379,19 @@ namespace SimplePythonPorter.Converter
                 SpecialType.System_String => true,
                 _ => false
             };
+        }
+
+        public static String GetDefaultValue(this ITypeSymbol type)
+        {
+            if (type.IsBoolean())
+                return "False";
+            if (type.IsIntegerNumber())
+                return "0";
+            if (type.IsFloatNumber())
+                return "0.0";
+            if (type.IsString())
+                return "\"\"";
+            return "None";
         }
     }
 
