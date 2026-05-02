@@ -34,7 +34,7 @@ namespace SimplePythonPorter.Converter
                 classStorage.AddBaseClass(baseType.Type.ToString());
             }
             CurrentTypeData currentTypeData = CurrentTypeData.Create(node, _model, _appData);
-            ProcessConstructors(CollectConstructors(node), classStorage, currentTypeData);
+            ProcessConstructors(CollectConstructors(node), CollectFields(node), classStorage, currentTypeData);
             ProcessMethods(CollectMethods(node), classStorage, currentTypeData);
             base.VisitClassDeclaration(node);
         }
@@ -116,29 +116,52 @@ namespace SimplePythonPorter.Converter
             return dest;
         }
 
-        private void ProcessConstructors(IList<MethodData> constructors, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private IList<FieldData> CollectFields(TypeDeclarationSyntax type)
+        {
+            return type
+                .GetMembers<FieldDeclarationSyntax>()
+                .Select(field => FieldData.Create(type, field, _model, _appData))
+                .ToList();
+        }
+
+        private void ProcessFields(IList<FieldData> fields, MethodStorage methodStorage, CurrentTypeData currentTypeData)
+        {
+            foreach (FieldData field in fields)
+            {
+                foreach (VariableData variable in field.Variables)
+                {
+                    String value = variable.Initializer == null
+                        ? variable.Type.GetDefaultValue()
+                        : "<expression>";
+                    methodStorage.AddBodyLine($"{PythonSpecificDef.SelfArg}.{variable.DestName} = {value}");
+                }
+            }
+        }
+
+        private void ProcessConstructors(IList<MethodData> constructors, IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
         {
             switch (constructors.Count)
             {
                 case 0:
-                    ProcessDefaultConstructor(classStorage, currentTypeData);
+                    ProcessDefaultConstructor(fields, classStorage, currentTypeData);
                     break;
                 case 1:
-                    ProcessNonOverloadingConstructor(constructors[0], classStorage, currentTypeData);
+                    ProcessNonOverloadingConstructor(constructors[0], fields, classStorage, currentTypeData);
                     break;
                 case > 1:
-                    ProcessOverloadingConstructor(constructors, classStorage, currentTypeData);
+                    ProcessOverloadingConstructor(constructors, fields, classStorage, currentTypeData);
                     break;
             }
         }
 
-        private void ProcessDefaultConstructor(ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessDefaultConstructor(IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
         {
             String[] parameters = new[] {PythonSpecificDef.SelfArg};
             MethodStorage methodStorage = classStorage.CreateMethodStorage(PythonSpecificDef.Constructor, parameters);
+            ProcessFields(fields, methodStorage, currentTypeData);
         }
 
-        private void ProcessNonOverloadingConstructor(MethodData data, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessNonOverloadingConstructor(MethodData data, IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
         {
             String[] parameters = data
                 .Symbol
@@ -147,15 +170,16 @@ namespace SimplePythonPorter.Converter
                 .ToArray();
             parameters = new[] {PythonSpecificDef.SelfArg}.Concat(parameters).ToArray();
             MethodStorage methodStorage = classStorage.CreateMethodStorage(data.DestName, parameters);
+            ProcessFields(fields, methodStorage, currentTypeData);
             // process body
-            methodStorage.AddBodyLine("pass");
         }
 
-        private void ProcessOverloadingConstructor(IList<MethodData> overloadings, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessOverloadingConstructor(IList<MethodData> overloadings, IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
         {
             String destName = overloadings[0].DestName;
             String[] parameters = new[] {PythonSpecificDef.SelfArg, PythonSpecificDef.Args};
             MethodStorage methodStorage = classStorage.CreateMethodStorage(destName, parameters);
+            ProcessFields(fields, methodStorage, currentTypeData);
             foreach (MethodData overloading in overloadings)
                 ProcessOverloadingCase(overloading, methodStorage, currentTypeData);
             methodStorage.ImportStorage.AddImport("system");
@@ -201,7 +225,6 @@ namespace SimplePythonPorter.Converter
             else
             {
                 // process body
-                methodStorage.AddBodyLine("pass");
             }
         }
 
@@ -402,6 +425,27 @@ namespace SimplePythonPorter.Converter
             if (currentType.ModuleName.Equals(module))
                 return;
             importStorage.AddImport(module, alias);
+        }
+    }
+
+    internal record VariableData(String DestName, ITypeSymbol Type, EqualsValueClauseSyntax? Initializer);
+
+    internal record FieldData(FieldDeclarationSyntax Field, VariableData[] Variables)
+    {
+        public static FieldData Create(TypeDeclarationSyntax type, FieldDeclarationSyntax field, SemanticModel model, AppData appData)
+        {
+            String typeName = type.Identifier.Text;
+            VariableData[] variables = new VariableData[field.Declaration.Variables.Count];
+            ITypeSymbol typeSymbol = model.GetTypeInfo(field.Declaration.Type).Type.Must();
+            for (Int32 index = 0; index < field.Declaration.Variables.Count; ++index)
+            {
+                VariableDeclaratorSyntax variable = field.Declaration.Variables[index];
+                IFieldSymbol fieldSymbol = model.GetDeclaredSymbol(variable).MustCast<ISymbol, IFieldSymbol>();
+                MemberModifier modifier = fieldSymbol.DeclaredAccessibility.ToMemberModifier();
+                String destName = appData.NameTransformer.TransformFieldName(typeName, fieldSymbol.Name, modifier);
+                variables[index] = new VariableData(destName, fieldSymbol.Type, variable.Initializer);
+            }
+            return new FieldData(field, variables);
         }
     }
 }
