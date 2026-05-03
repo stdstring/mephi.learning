@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimplePythonPorter.Common;
 using SimplePythonPorter.DestStorage;
+using SimplePythonPorter.Expressions;
 using SimplePythonPorter.Utils;
 
 namespace SimplePythonPorter.Converter
@@ -130,9 +131,16 @@ namespace SimplePythonPorter.Converter
             {
                 foreach (VariableData variable in field.Variables)
                 {
-                    String value = variable.Initializer == null
-                        ? variable.Type.GetDefaultValue()
-                        : "<expression>";
+                    String value;
+                    if (variable.Initializer == null)
+                        value = variable.Type.GetDefaultValue();
+                    else
+                    {
+                        ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+                        ConvertResult result = expressionConverter.Convert(variable.Initializer.Value);
+                        methodStorage.ImportStorage.Append(result.ImportData);
+                        value = result.Result;
+                    }
                     methodStorage.AddBodyLine($"{PythonSpecificDef.SelfArg}.{variable.DestName} = {value}");
                 }
             }
