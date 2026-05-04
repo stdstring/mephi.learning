@@ -191,8 +191,7 @@ namespace SimplePythonPorter.Converter
             }
             if (hasParameters)
                 methodStorage.IncreaseLocalIndentation();
-            // process body
-            methodStorage.AddBodyLine("pass");
+            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
             if (hasParameters)
             {
                 methodStorage.DecreaseLocalIndentation();
@@ -255,13 +254,7 @@ namespace SimplePythonPorter.Converter
             }
             if (hasParameters)
                 methodStorage.IncreaseLocalIndentation();
-            if (data.Symbol.IsAbstract)
-                methodStorage.AddException("system.InvalidOperationException", "Abstract method call");
-            else
-            {
-                // process body
-                methodStorage.AddBodyLine("pass");
-            }
+            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
             if (hasParameters)
             {
                 methodStorage.DecreaseLocalIndentation();
@@ -293,9 +286,7 @@ namespace SimplePythonPorter.Converter
             String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
             methodStorage.AddBodyLine($"if {argumentTypeCheck}:");
             methodStorage.IncreaseLocalIndentation();
-            if (data.Symbol.IsAbstract)
-                methodStorage.AddException("system.InvalidOperationException", "Abstract method call");
-            else
+            if (!data.Symbol.IsAbstract)
             {
                 for (Int32 index = 0; index < data.Symbol.Parameters.Length; ++index)
                 {
@@ -303,9 +294,8 @@ namespace SimplePythonPorter.Converter
                     String parameterName = _appData.NameTransformer.TransformLocalVariableName(parameter.Name);
                     methodStorage.AddBodyLine($"{parameterName} = args[{index}]");
                 }
-                // process body
-                methodStorage.AddBodyLine("pass");
             }
+            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
             methodStorage.DecreaseLocalIndentation();
         }
 
@@ -327,6 +317,19 @@ namespace SimplePythonPorter.Converter
             String destModuleName = _appData.NameTransformer.TransformNamespaceName(sourceNamespaceName);
             methodStorage.ImportStorage.AddImport(currentTypeData, destModuleName);
             return $"(isinstance({parameterName}, {destModuleName}.{destTypeName}) or {parameterName} is None)";
+        }
+
+        private void ProcessBody(BlockSyntax? blockSyntax, IMethodSymbol symbol, MethodStorage methodStorage)
+        {
+            if (symbol.IsAbstract)
+            {
+                methodStorage.AddException("system.InvalidOperationException", "Abstract method call");
+                return;
+            }
+            if (blockSyntax == null)
+                return;
+            StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, methodStorage, _appData);
+            statementConverter.VisitBlock(blockSyntax);
         }
 
         private readonly SemanticModel _model;

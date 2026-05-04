@@ -5,9 +5,9 @@ using SimplePythonPorter.DestStorage;
 
 namespace SimplePythonPorter.Converter
 {
-    internal class MethodConverterVisitor : CSharpSyntaxWalker
+    internal class MemberConverterVisitor : CSharpSyntaxWalker
     {
-        public MethodConverterVisitor(SemanticModel model, ClassStorage currentClass, AppData appData)
+        public MemberConverterVisitor(SemanticModel model, ClassStorage currentClass, AppData appData)
         {
             _model = model;
             _currentClass = currentClass;
