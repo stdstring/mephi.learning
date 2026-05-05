@@ -24,8 +24,32 @@ namespace SimplePythonPorter.Expressions
                 case MemberAccessExpressionSyntax memberAccessExpression:
                     MemberAccessExpressionConverter converter = new MemberAccessExpressionConverter(_model, _appData, _settings);
                     return converter.Convert(memberAccessExpression, expression.ArgumentList);
-                case IdentifierNameSyntax identifierExpression:
-                    return new ConvertResult($"self.{identifierExpression.Identifier.ValueText}", new ImportData());
+                case IdentifierNameSyntax:
+                    return ConvertForIdentifierNameSyntax(expression);
+                default:
+                    throw new UnsupportedSyntaxException($"Unsupported invocation expression: {expression.Expression.Kind()}");
+            }
+        }
+
+        private ConvertResult ConvertForIdentifierNameSyntax(InvocationExpressionSyntax expression)
+        {
+            ImportData importData = new ImportData();
+            ArgumentListConverter argumentListConverter = new ArgumentListConverter(_model, _appData, _settings.CreateChild());
+            IReadOnlyList<ArgumentSyntax> arguments = expression.ArgumentList.GetArguments();
+            ConvertArgumentsResult convertedArguments = argumentListConverter.Convert(expression, arguments);
+            importData.Append(convertedArguments.ImportData);
+            SymbolInfo symbolInfo = _model.GetSymbolInfo(expression);
+            switch (symbolInfo.Symbol)
+            {
+                case null:
+                    throw new UnsupportedSyntaxException($"Bad symbol info for expression: {expression.Expression.Kind()}");
+                case IMethodSymbol methodSymbol:
+                    ITypeSymbol containedType = methodSymbol.ContainingType;
+                    String containedTypeName = containedType.GetTypeFullName();
+                    MemberModifier modifier = methodSymbol.DeclaredAccessibility.ToMemberModifier();
+                    String methodName = _appData.NameTransformer.TransformMethodName(containedTypeName, methodSymbol.Name, modifier);
+                    String invocation = $"self.{methodName}({String.Join(", ", convertedArguments.Result.Values)})";
+                    return new ConvertResult(invocation, importData);
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported invocation expression: {expression.Expression.Kind()}");
             }
