@@ -41,7 +41,7 @@ namespace SimplePythonPorter.Expressions
                 {
                     TypeResolveData resolveData = _externalEntityResolver.ResolveType(type);
                     importData.Append(resolveData.ImportData);
-                    String typeName = $"{resolveData.ModuleName}.{resolveData.TypeName}";
+                    String typeName = resolveData.GetTypeFullName();
                     return ConvertImpl(expression, target, arguments, importData: importData, typeName, convertedArguments.Result);
                 }
                 default:

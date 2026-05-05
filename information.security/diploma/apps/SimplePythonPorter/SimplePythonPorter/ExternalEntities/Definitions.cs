@@ -4,7 +4,13 @@ using SimplePythonPorter.Expressions;
 
 namespace SimplePythonPorter.ExternalEntities
 {
-    internal record TypeResolveData(String TypeName, String ModuleName, ImportData ImportData);
+    internal record TypeResolveData(String TypeName, String ModuleName, ImportData ImportData)
+    {
+        public String GetTypeFullName()
+        {
+            return String.IsNullOrEmpty(ModuleName) ? TypeName : $"{ModuleName}.{TypeName}";
+        }
+    }
 
     internal record MemberData(ExpressionSyntax Target, SimpleNameSyntax Name, IReadOnlyList<ArgumentSyntax> Arguments);
 

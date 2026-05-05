@@ -45,7 +45,7 @@ namespace SimplePythonPorter.Expressions
         private ConvertResult ProcessTypeResolveData(TypeResolveData resolveData, ImportData importData)
         {
             importData.Append(resolveData.ImportData);
-            return new ConvertResult($"{resolveData.ModuleName}.{resolveData.TypeName}", importData);
+            return new ConvertResult(resolveData.GetTypeFullName(), importData);
         }
 
         private readonly SemanticModel _model;

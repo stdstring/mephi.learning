@@ -23,7 +23,7 @@
         public override String GetRepresentation()
         {
             if (!Check())
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Bad data");
             return $"move({xPos},{yPos})";
         }
 
@@ -46,7 +46,7 @@
         public override String GetRepresentation()
         {
             if (!Check())
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Bad data");
             return $"color({color})";
         }
 
@@ -69,7 +69,7 @@
         public override String GetRepresentation()
         {
             if (!Check())
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Bad data");
             return $"point({xPos},{yPos})";
         }
 
@@ -103,7 +103,7 @@
         public override String GetRepresentation()
         {
             if (!Check())
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Bad data");
             return $"rectangle({xLeft},{yTop},{xRight},{yBottom})";
         }
 
@@ -130,7 +130,7 @@
         public override String GetRepresentation()
         {
             if (!Check())
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Bad data");
             return $"circle({xCenter},{yCenter},{radius})";
         }
 
