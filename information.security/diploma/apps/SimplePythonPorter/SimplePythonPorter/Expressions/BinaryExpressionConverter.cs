@@ -9,10 +9,10 @@ namespace SimplePythonPorter.Expressions
 {
     internal class BinaryExpressionConverter
     {
-        public BinaryExpressionConverter(SemanticModel model, AppData appData)
+        public BinaryExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
-            _expressionConverter = new ExpressionConverter(model, appData);
+            _expressionConverter = new ExpressionConverter(model, appData, settings);
         }
 
         public ConvertResult Convert(BinaryExpressionSyntax expression)

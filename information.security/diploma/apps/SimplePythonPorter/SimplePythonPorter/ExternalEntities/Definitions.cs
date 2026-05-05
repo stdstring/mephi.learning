@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimplePythonPorter.DestStorage;
+using SimplePythonPorter.Expressions;
 
 namespace SimplePythonPorter.ExternalEntities
 {
@@ -7,7 +8,7 @@ namespace SimplePythonPorter.ExternalEntities
 
     internal record MemberData(ExpressionSyntax Target, SimpleNameSyntax Name, IReadOnlyList<ArgumentSyntax> Arguments);
 
-    internal record MemberRepresentation(String Target/*, ConvertedArguments Arguments*/);
+    internal record MemberRepresentation(String Target, ConvertedArguments Arguments);
 
     internal record MemberResolveData(String Member, ImportData ImportData)
     {

@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimplePythonPorter.Common;
 using SimplePythonPorter.DestStorage;
 using SimplePythonPorter.Utils;
-using System.Runtime;
 using System.Text;
 
 namespace SimplePythonPorter.Expressions
@@ -18,29 +17,32 @@ namespace SimplePythonPorter.Expressions
 
     internal class ExpressionConverter
     {
-        public ExpressionConverter(SemanticModel model, AppData appData)
+        public ExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
+            _settings = settings;
         }
 
         public ConvertResult Convert(ExpressionSyntax expression)
         {
-            ExpressionConverterVisitor visitor = new ExpressionConverterVisitor(_model, _appData);
+            ExpressionConverterVisitor visitor = new ExpressionConverterVisitor(_model, _appData, _settings);
             visitor.VisitExpression(expression);
             return new ConvertResult(visitor.Buffer.ToString(), visitor.ImportData, visitor.AfterResults);
         }
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _settings;
     }
 
     internal class ExpressionConverterVisitor : CSharpSyntaxWalker
     {
-        public ExpressionConverterVisitor(SemanticModel model, AppData appData)
+        public ExpressionConverterVisitor(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
             _model = model;
             _appData = appData;
+            _settings = settings;
         }
 
         public StringBuilder Buffer { get; } = new StringBuilder();
@@ -58,11 +60,35 @@ namespace SimplePythonPorter.Expressions
                 case AssignmentExpressionSyntax node:
                     VisitAssignmentExpression(node);
                     break;
+                case BinaryExpressionSyntax node:
+                    VisitBinaryExpression(node);
+                    break;
                 case IdentifierNameSyntax node:
                     VisitIdentifierName(node);
                     break;
-                case BinaryExpressionSyntax node:
-                    VisitBinaryExpression(node);
+                case InterpolatedStringExpressionSyntax node:
+                    VisitInterpolatedStringExpression(node);
+                    break;
+                case InvocationExpressionSyntax node:
+                    VisitInvocationExpression(node);
+                    break;
+                case LiteralExpressionSyntax node:
+                    VisitLiteralExpression(node);
+                    break;
+                case MemberAccessExpressionSyntax node:
+                    VisitMemberAccessExpression(node);
+                    break;
+                case ObjectCreationExpressionSyntax node:
+                    VisitObjectCreationExpression(node);
+                    break;
+                case ParenthesizedExpressionSyntax node:
+                    VisitParenthesizedExpression(node);
+                    break;
+                case PrefixUnaryExpressionSyntax node:
+                    VisitPrefixUnaryExpression(node);
+                    break;
+                case PostfixUnaryExpressionSyntax node:
+                    VisitPostfixUnaryExpression(node);
                     break;
                 default:
                     throw new UnsupportedSyntaxException($"Unsupported expression: {expression.Kind()}");
@@ -71,19 +97,67 @@ namespace SimplePythonPorter.Expressions
 
         public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
         {
-            AssignmentExpressionConverter converter = new AssignmentExpressionConverter(_model, _appData);
-            AppendResult(converter.Convert(node));
-        }
-
-        public override void VisitIdentifierName(IdentifierNameSyntax node)
-        {
-            IdentifierExpressionConverter converter = new IdentifierExpressionConverter(_model, _appData);
+            AssignmentExpressionConverter converter = new AssignmentExpressionConverter(_model, _appData, _settings.CreateChild());
             AppendResult(converter.Convert(node));
         }
 
         public override void VisitBinaryExpression(BinaryExpressionSyntax node)
         {
-            BinaryExpressionConverter converter = new BinaryExpressionConverter(_model, _appData);
+            BinaryExpressionConverter converter = new BinaryExpressionConverter(_model, _appData, _settings.CreateChild());
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitIdentifierName(IdentifierNameSyntax node)
+        {
+            IdentifierExpressionConverter converter = new IdentifierExpressionConverter(_model, _appData, _settings);
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitInterpolatedStringExpression(InterpolatedStringExpressionSyntax node)
+        {
+            InterpolatedStringExpressionConverter converter = new InterpolatedStringExpressionConverter(_model, _appData, _settings.CreateChild());
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+        {
+            InvocationExpressionConverter converter = new InvocationExpressionConverter(_model, _appData, _settings);
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitLiteralExpression(LiteralExpressionSyntax node)
+        {
+            LiteralExpressionConverter converter = new LiteralExpressionConverter(_settings.CreateChild());
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        {
+            MemberAccessExpressionConverter converter = new MemberAccessExpressionConverter(_model, _appData, _settings);
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
+        {
+            ObjectCreationExpressionConverter converter = new ObjectCreationExpressionConverter(_model, _appData, _settings);
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
+        {
+            ParenthesizedExpressionConverter converter = new ParenthesizedExpressionConverter(_model, _appData, _settings.CreateChild());
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
+        {
+            UnaryExpressionConverter converter = new UnaryExpressionConverter(_model, _appData, _settings);
+            AppendResult(converter.Convert(node));
+        }
+
+        public override void VisitPostfixUnaryExpression(PostfixUnaryExpressionSyntax node)
+        {
+            UnaryExpressionConverter converter = new UnaryExpressionConverter(_model, _appData, _settings);
             AppendResult(converter.Convert(node));
         }
 
@@ -122,5 +196,6 @@ namespace SimplePythonPorter.Expressions
 
         private readonly SemanticModel _model;
         private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _settings;
     }
 }

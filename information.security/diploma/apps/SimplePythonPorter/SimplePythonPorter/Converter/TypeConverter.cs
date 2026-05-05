@@ -127,6 +127,7 @@ namespace SimplePythonPorter.Converter
 
         private void ProcessFields(IList<FieldData> fields, MethodStorage methodStorage, CurrentTypeData currentTypeData)
         {
+            ExpressionConverterSettings expressionSettings = new ExpressionConverterSettings();
             foreach (FieldData field in fields)
             {
                 foreach (VariableData variable in field.Variables)
@@ -136,7 +137,7 @@ namespace SimplePythonPorter.Converter
                         value = variable.Type.GetDefaultValue();
                     else
                     {
-                        ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+                        ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, expressionSettings);
                         ConvertResult result = expressionConverter.Convert(variable.Initializer.Value);
                         methodStorage.ImportStorage.Append(result.ImportData);
                         value = result.Result;

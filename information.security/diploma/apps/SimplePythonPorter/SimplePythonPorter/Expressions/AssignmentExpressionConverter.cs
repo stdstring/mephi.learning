@@ -8,9 +8,9 @@ namespace SimplePythonPorter.Expressions
 {
     internal class AssignmentExpressionConverter
     {
-        public AssignmentExpressionConverter(SemanticModel model, AppData appData)
+        public AssignmentExpressionConverter(SemanticModel model, AppData appData, ExpressionConverterSettings settings)
         {
-            _expressionConverter = new ExpressionConverter(model, appData);
+            _expressionConverter = new ExpressionConverter(model, appData, settings);
         }
 
         public ConvertResult Convert(AssignmentExpressionSyntax expression)

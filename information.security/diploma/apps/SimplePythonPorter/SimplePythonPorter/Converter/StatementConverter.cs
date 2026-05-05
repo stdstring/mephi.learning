@@ -15,6 +15,7 @@ namespace SimplePythonPorter.Converter
             _model = model;
             _currentMethod = currentMethod;
             _appData = appData;
+            _expressionCommonSettings = new ExpressionConverterSettings();
         }
 
         public override void VisitBlock(BlockSyntax node)
@@ -30,7 +31,8 @@ namespace SimplePythonPorter.Converter
 
         public override void VisitExpressionStatement(ExpressionStatementSyntax node)
         {
-            String expression = ConvertExpression(node.Expression);
+            ExpressionConverterSettings expressionSettings = new ExpressionConverterSettings(_expressionCommonSettings) {AllowIncrementDecrement = true};
+            String expression = ConvertExpression(node.Expression, expressionSettings);
             _currentMethod.AddBodyLine(expression);
         }
 
@@ -43,7 +45,7 @@ namespace SimplePythonPorter.Converter
             if (loopSourceInfo.Type == null)
                 throw new UnsupportedSyntaxException("Unrecognizable type of foreach loop source");
             String enumerationVariable = _appData.NameTransformer.TransformLocalVariableName(node.Identifier.Text);
-            String forEachExpression = ConvertExpression(node.Expression);
+            String forEachExpression = ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"for {enumerationVariable} in {forEachExpression}:");
             VisitStatement(node.Statement, true);
         }
@@ -55,7 +57,7 @@ namespace SimplePythonPorter.Converter
 
         public override void VisitWhileStatement(WhileStatementSyntax node)
         {
-            String condition = ConvertExpression(node.Condition);
+            String condition = ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"while {condition}:");
             VisitStatement(node.Statement, true);
         }
@@ -65,7 +67,7 @@ namespace SimplePythonPorter.Converter
             _currentMethod.AddBodyLine("while True:");
             VisitStatement(node.Statement, true);
             _currentMethod.IncreaseLocalIndentation();
-            String condition = ConvertExpression(node.Condition);
+            String condition = ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"if {condition}:");
             _currentMethod.AddBodyLine("break");
             _currentMethod.DecreaseLocalIndentation();
@@ -84,7 +86,7 @@ namespace SimplePythonPorter.Converter
         public override void VisitReturnStatement(ReturnStatementSyntax node)
         {
             String delimiter = node.Expression == null ? "" : " ";
-            String expression = node.Expression == null ? "" : ConvertExpression(node.Expression);
+            String expression = node.Expression == null ? "" : ConvertExpression(node.Expression, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"return{delimiter}{expression}");
         }
 
@@ -94,7 +96,7 @@ namespace SimplePythonPorter.Converter
                 _currentMethod.AddBodyLine("raise");
             else
             {
-                String exception = ConvertExpression(node.Expression);
+                String exception = ConvertExpression(node.Expression, _expressionCommonSettings);
                 _currentMethod.AddBodyLine($"raise {exception}");
             }
         }
@@ -138,7 +140,7 @@ namespace SimplePythonPorter.Converter
             //IList<String> afterResults = new List<String>();
             if (variable.Initializer != null)
             {
-                ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+                ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, _expressionCommonSettings);
                 ConvertResult result = expressionConverter.Convert(variable.Initializer.Value);
                 _currentMethod.ImportStorage.Append(result.ImportData);
                 initializer = result.Result;
@@ -150,7 +152,7 @@ namespace SimplePythonPorter.Converter
 
         private void VisitIfStatementImpl(IfStatementSyntax node, String ifOperator)
         {
-            String condition = ConvertExpression(node.Condition);
+            String condition = ConvertExpression(node.Condition, _expressionCommonSettings);
             _currentMethod.AddBodyLine($"{ifOperator} {condition}:");
             VisitStatement(node.Statement, true);
             switch (node.Else)
@@ -166,9 +168,9 @@ namespace SimplePythonPorter.Converter
                     break;
             }
         }
-        private String ConvertExpression(ExpressionSyntax expression)
+        private String ConvertExpression(ExpressionSyntax expression, ExpressionConverterSettings settings)
         {
-            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData);
+            ExpressionConverter expressionConverter = new ExpressionConverter(_model, _appData, settings);
             ConvertResult result = expressionConverter.Convert(expression);
             _currentMethod.ImportStorage.Append(result.ImportData);
             return result.Result;
@@ -177,5 +179,6 @@ namespace SimplePythonPorter.Converter
         private readonly SemanticModel _model;
         private readonly MethodStorage _currentMethod;
         private readonly AppData _appData;
+        private readonly ExpressionConverterSettings _expressionCommonSettings;
     }
 }

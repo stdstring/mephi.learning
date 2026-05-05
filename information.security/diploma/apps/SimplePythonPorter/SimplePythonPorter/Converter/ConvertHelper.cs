@@ -26,5 +26,10 @@ namespace SimplePythonPorter.Converter
                 _ => throw new UnsupportedSyntaxException($"Unexpected type of expression: {expression.Kind()}")
             };
         }
+
+        public static IReadOnlyList<ArgumentSyntax> GetArguments(this ArgumentListSyntax? argumentList)
+        {
+            return argumentList == null ? Array.Empty<ArgumentSyntax>() : argumentList.Arguments;
+        }
     }
 }
