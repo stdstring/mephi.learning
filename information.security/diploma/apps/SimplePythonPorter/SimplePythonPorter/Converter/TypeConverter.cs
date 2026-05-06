@@ -106,7 +106,7 @@ namespace SimplePythonPorter.Converter
         {
             // processing overloading
             List<MethodData> dest = new List<MethodData>(source);
-            dest.Sort((MethodData left, MethodData right) =>
+            dest.Sort((left, right) =>
             {
                 if (left.Symbol.Parameters.Length < right.Symbol.Parameters.Length)
                     return -1;
@@ -180,24 +180,10 @@ namespace SimplePythonPorter.Converter
             parameters = new[] {PythonSpecificDef.SelfArg}.Concat(parameters).ToArray();
             MethodStorage methodStorage = classStorage.CreateMethodStorage(data.DestName, parameters);
             ProcessFields(fields, methodStorage, currentTypeData);
-            Boolean hasParameters = data.Symbol.Parameters.Length > 0;
-            if (hasParameters)
-            {
-                String[] argumentTypeChecks = data.Symbol
-                    .Parameters
-                    .Select(parameter => GenerateArgumentTypeCheck(parameter.Name, parameter.Type, methodStorage, currentTypeData))
-                    .ToArray();
-                String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
-                methodStorage.AddBodyLine($"if {argumentTypeCheck}:");
-            }
-            if (hasParameters)
-                methodStorage.IncreaseLocalIndentation();
-            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
-            if (hasParameters)
-            {
-                methodStorage.DecreaseLocalIndentation();
-                methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments");
-            }
+            if (data.Symbol.Parameters.Length > 0)
+                ProcessNonOverloadingBodyWithParameters(data, methodStorage, currentTypeData);
+            else
+                ProcessNonOverloadingBodyWithoutParameters(data, methodStorage);
         }
 
         private void ProcessOverloadingConstructor(IList<MethodData> overloadings, IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
@@ -206,9 +192,10 @@ namespace SimplePythonPorter.Converter
             String[] parameters = new[] {PythonSpecificDef.SelfArg, PythonSpecificDef.Args};
             MethodStorage methodStorage = classStorage.CreateMethodStorage(destName, parameters);
             ProcessFields(fields, methodStorage, currentTypeData);
-            foreach (MethodData overloading in overloadings)
-                ProcessOverloadingCase(overloading, methodStorage, currentTypeData);
-            methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments");
+            for (Int32 index = 0; index < overloadings.Count; ++index)
+                ProcessOverloadingCase(overloadings[index], index, methodStorage, currentTypeData);
+            methodStorage.AddBodyLine("else:");
+            methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments", true);
         }
 
         private void ProcessMethods(IDictionary<String, IList<MethodData>> methods, ClassStorage classStorage, CurrentTypeData currentTypeData)
@@ -242,25 +229,10 @@ namespace SimplePythonPorter.Converter
             MethodStorage methodStorage = classStorage.CreateMethodStorage(data.DestName, parameters);
             if (data.Symbol.IsStatic)
                 methodStorage.AddDecorator(PythonSpecificDef.StaticMethod);
-            Boolean hasParameters = data.Symbol.Parameters.Length > 0;
-            if (hasParameters)
-            {
-                String[] argumentTypeChecks = data.Symbol
-                    .Parameters
-                    .Select(parameter =>
-                        GenerateArgumentTypeCheck(parameter.Name, parameter.Type, methodStorage, currentTypeData))
-                    .ToArray();
-                String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
-                methodStorage.AddBodyLine($"if {argumentTypeCheck}:");
-            }
-            if (hasParameters)
-                methodStorage.IncreaseLocalIndentation();
-            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
-            if (hasParameters)
-            {
-                methodStorage.DecreaseLocalIndentation();
-                methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments");
-            }
+            if (data.Symbol.Parameters.Length > 0)
+                ProcessNonOverloadingBodyWithParameters(data, methodStorage, currentTypeData);
+            else
+                ProcessNonOverloadingBodyWithoutParameters(data, methodStorage);
         }
 
         private void ProcessOverloadingMethod(IList<MethodData> overloadings, ClassStorage classStorage, CurrentTypeData currentTypeData)
@@ -271,12 +243,13 @@ namespace SimplePythonPorter.Converter
             MethodStorage methodStorage = classStorage.CreateMethodStorage(destName, parameters);
             if (isStatic)
                 methodStorage.AddDecorator(PythonSpecificDef.StaticMethod);
-            foreach (MethodData overloading in overloadings)
-                ProcessOverloadingCase(overloading, methodStorage, currentTypeData);
-            methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments");
+            for (Int32 index = 0; index < overloadings.Count; ++index)
+                ProcessOverloadingCase(overloadings[index], index, methodStorage, currentTypeData);
+            methodStorage.AddBodyLine("else:");
+            methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments", true);
         }
 
-        private void ProcessOverloadingCase(MethodData data, MethodStorage methodStorage, CurrentTypeData currentTypeData)
+        private void ProcessOverloadingCase(MethodData data, Int32 overloadingIndex, MethodStorage methodStorage, CurrentTypeData currentTypeData)
         {
             String[] argumentTypeChecks = new String[data.Symbol.Parameters.Length + 1];
             argumentTypeChecks[0] = $"(len(args) == {data.Symbol.Parameters.Length})";
@@ -285,7 +258,7 @@ namespace SimplePythonPorter.Converter
                 argumentTypeChecks[index + 1] = GenerateArgumentTypeCheck($"args[{index}]", data.Symbol.Parameters[index].Type, methodStorage, currentTypeData);
             }
             String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
-            methodStorage.AddBodyLine($"if {argumentTypeCheck}:");
+            methodStorage.AddBodyLine($"{(overloadingIndex == 0 ? "if" : "elif")} {argumentTypeCheck}:");
             methodStorage.IncreaseLocalIndentation();
             if (!data.Symbol.IsAbstract)
             {
@@ -298,6 +271,26 @@ namespace SimplePythonPorter.Converter
             }
             ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
             methodStorage.DecreaseLocalIndentation();
+        }
+
+        private void ProcessNonOverloadingBodyWithParameters(MethodData data, MethodStorage methodStorage, CurrentTypeData currentTypeData)
+        {
+            String[] argumentTypeChecks = data.Symbol
+                .Parameters
+                .Select(parameter => GenerateArgumentTypeCheck(parameter.Name, parameter.Type, methodStorage, currentTypeData))
+                .ToArray();
+            String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
+            methodStorage.AddBodyLine($"if {argumentTypeCheck}:");
+            methodStorage.IncreaseLocalIndentation();
+            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
+            methodStorage.DecreaseLocalIndentation();
+            methodStorage.AddBodyLine("else:");
+            methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments", true);
+        }
+
+        private void ProcessNonOverloadingBodyWithoutParameters(MethodData data, MethodStorage methodStorage)
+        {
+            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
         }
 
         private String GenerateArgumentTypeCheck(String parameterName, ITypeSymbol parameterType, MethodStorage methodStorage, CurrentTypeData currentTypeData)
@@ -484,7 +477,6 @@ namespace SimplePythonPorter.Converter
         {
             String typeName = type.Identifier.Text;
             VariableData[] variables = new VariableData[field.Declaration.Variables.Count];
-            ITypeSymbol typeSymbol = model.GetTypeInfo(field.Declaration.Type).Type.Must();
             for (Int32 index = 0; index < field.Declaration.Variables.Count; ++index)
             {
                 VariableDeclaratorSyntax variable = field.Declaration.Variables[index];
@@ -494,18 +486,6 @@ namespace SimplePythonPorter.Converter
                 variables[index] = new VariableData(destName, fieldSymbol.Type, variable.Initializer);
             }
             return new FieldData(field, variables);
-        }
-    }
-
-    internal static class MethodStorageHelper
-    {
-        public static void AddException(this MethodStorage methodStorage, String exceptionFullName, String message)
-        {
-            const Char delimiter = '.';
-            Int32 index = exceptionFullName.LastIndexOf(delimiter);
-            if (index != -1)
-                methodStorage.ImportStorage.AddImport(exceptionFullName.Substring(0, index));
-            methodStorage.AddBodyLine($"raise {exceptionFullName}(\"{message}\")");
         }
     }
 }
