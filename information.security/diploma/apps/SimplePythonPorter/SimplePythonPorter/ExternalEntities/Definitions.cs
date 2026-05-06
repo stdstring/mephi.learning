@@ -22,10 +22,4 @@ namespace SimplePythonPorter.ExternalEntities
         {
         }
     }
-
-    /*internal interface IExternalEntityResolver
-    {
-        MemberResolveData ResolveCtor(ITypeSymbol sourceType, IReadOnlyList<ArgumentSyntax> argumentsData, ConvertedArguments argumentsRepresentation);
-        MemberResolveData ResolveMember(MemberData data, ITypeSymbol sourceType, MemberRepresentation representation);
-    }*/
 }
