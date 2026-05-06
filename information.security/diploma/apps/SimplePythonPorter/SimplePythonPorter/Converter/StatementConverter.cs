@@ -10,12 +10,12 @@ namespace SimplePythonPorter.Converter
 {
     internal class StatementConverterVisitor : CSharpSyntaxWalker
     {
-        public StatementConverterVisitor(SemanticModel model, MethodStorage currentMethod, AppData appData)
+        public StatementConverterVisitor(SemanticModel model, AppData appData, CurrentProcessingType currentType, MethodStorage currentMethod)
         {
             _model = model;
             _currentMethod = currentMethod;
             _appData = appData;
-            _expressionCommonSettings = new ExpressionConverterSettings();
+            _expressionCommonSettings = new ExpressionConverterSettings(currentType);
         }
 
         public override void VisitBlock(BlockSyntax node)

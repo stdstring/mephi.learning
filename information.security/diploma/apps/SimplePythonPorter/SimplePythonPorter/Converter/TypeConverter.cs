@@ -19,8 +19,8 @@ namespace SimplePythonPorter.Converter
 
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            INamedTypeSymbol? currentType = _model.GetDeclaredSymbol(node);
-            CheckTypeDeclaration(node, currentType);
+            INamedTypeSymbol? type = _model.GetDeclaredSymbol(node);
+            CheckTypeDeclaration(node, type);
             String destClassName = _appData.NameTransformer.TransformTypeName(node.Identifier.Text);
             ClassStorage classStorage = _currentFile.CreateClassStorage(destClassName);
             Boolean isAbstract = node.Modifiers.Any(m => m.IsKind(SyntaxKind.AbstractKeyword));
@@ -34,16 +34,16 @@ namespace SimplePythonPorter.Converter
             {
                 classStorage.AddBaseClass(baseType.Type.ToString());
             }
-            CurrentTypeData currentTypeData = CurrentTypeData.Create(node, _model, _appData);
-            ProcessConstructors(CollectConstructors(node), CollectFields(node), classStorage, currentTypeData);
-            ProcessMethods(CollectMethods(node), classStorage, currentTypeData);
+            CurrentProcessingType currentType = CurrentProcessingType.Create(node, _model, _appData);
+            ProcessConstructors(CollectConstructors(node), CollectFields(node), classStorage, currentType);
+            ProcessMethods(CollectMethods(node), classStorage, currentType);
             base.VisitClassDeclaration(node);
         }
 
         public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
         {
-            INamedTypeSymbol? currentType = _model.GetDeclaredSymbol(node);
-            CheckTypeDeclaration(node, currentType);
+            INamedTypeSymbol? type = _model.GetDeclaredSymbol(node);
+            CheckTypeDeclaration(node, type);
             String destClassName = _appData.NameTransformer.TransformTypeName(node.Identifier.Text);
             ClassStorage classStorage = _currentFile.CreateClassStorage(destClassName);
             classStorage.AddBaseClass("ABC");
@@ -53,8 +53,8 @@ namespace SimplePythonPorter.Converter
             {
                 classStorage.AddBaseClass(baseType.Type.ToString());
             }
-            CurrentTypeData currentTypeData = CurrentTypeData.Create(node, _model, _appData);
-            ProcessMethods(CollectMethods(node), classStorage, currentTypeData);
+            CurrentProcessingType currentType = CurrentProcessingType.Create(node, _model, _appData);
+            ProcessMethods(CollectMethods(node), classStorage, currentType);
             base.VisitInterfaceDeclaration(node);
         }
 
@@ -125,9 +125,9 @@ namespace SimplePythonPorter.Converter
                 .ToList();
         }
 
-        private void ProcessFields(IList<FieldData> fields, MethodStorage methodStorage, CurrentTypeData currentTypeData)
+        private void ProcessFields(IList<FieldData> fields, MethodStorage methodStorage, CurrentProcessingType currentType)
         {
-            ExpressionConverterSettings expressionSettings = new ExpressionConverterSettings();
+            ExpressionConverterSettings expressionSettings = new ExpressionConverterSettings(currentType);
             foreach (FieldData field in fields)
             {
                 foreach (VariableData variable in field.Variables)
@@ -147,30 +147,30 @@ namespace SimplePythonPorter.Converter
             }
         }
 
-        private void ProcessConstructors(IList<MethodData> constructors, IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessConstructors(IList<MethodData> constructors, IList<FieldData> fields, ClassStorage classStorage, CurrentProcessingType currentType)
         {
             switch (constructors.Count)
             {
                 case 0:
-                    ProcessDefaultConstructor(fields, classStorage, currentTypeData);
+                    ProcessDefaultConstructor(fields, classStorage, currentType);
                     break;
                 case 1:
-                    ProcessNonOverloadingConstructor(constructors[0], fields, classStorage, currentTypeData);
+                    ProcessNonOverloadingConstructor(constructors[0], fields, classStorage, currentType);
                     break;
                 case > 1:
-                    ProcessOverloadingConstructor(constructors, fields, classStorage, currentTypeData);
+                    ProcessOverloadingConstructor(constructors, fields, classStorage, currentType);
                     break;
             }
         }
 
-        private void ProcessDefaultConstructor(IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessDefaultConstructor(IList<FieldData> fields, ClassStorage classStorage, CurrentProcessingType currentType)
         {
             String[] parameters = new[] {PythonSpecificDef.SelfArg};
             MethodStorage methodStorage = classStorage.CreateMethodStorage(PythonSpecificDef.Constructor, parameters);
-            ProcessFields(fields, methodStorage, currentTypeData);
+            ProcessFields(fields, methodStorage, currentType);
         }
 
-        private void ProcessNonOverloadingConstructor(MethodData data, IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessNonOverloadingConstructor(MethodData data, IList<FieldData> fields, ClassStorage classStorage, CurrentProcessingType currentType)
         {
             String[] parameters = data
                 .Symbol
@@ -179,26 +179,26 @@ namespace SimplePythonPorter.Converter
                 .ToArray();
             parameters = new[] {PythonSpecificDef.SelfArg}.Concat(parameters).ToArray();
             MethodStorage methodStorage = classStorage.CreateMethodStorage(data.DestName, parameters);
-            ProcessFields(fields, methodStorage, currentTypeData);
+            ProcessFields(fields, methodStorage, currentType);
             if (data.Symbol.Parameters.Length > 0)
-                ProcessNonOverloadingBodyWithParameters(data, methodStorage, currentTypeData);
+                ProcessNonOverloadingBodyWithParameters(data, currentType, methodStorage);
             else
-                ProcessNonOverloadingBodyWithoutParameters(data, methodStorage);
+                ProcessNonOverloadingBodyWithoutParameters(data, currentType, methodStorage);
         }
 
-        private void ProcessOverloadingConstructor(IList<MethodData> overloadings, IList<FieldData> fields, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessOverloadingConstructor(IList<MethodData> overloadings, IList<FieldData> fields, ClassStorage classStorage, CurrentProcessingType currentType)
         {
             String destName = overloadings[0].DestName;
             String[] parameters = new[] {PythonSpecificDef.SelfArg, PythonSpecificDef.Args};
             MethodStorage methodStorage = classStorage.CreateMethodStorage(destName, parameters);
-            ProcessFields(fields, methodStorage, currentTypeData);
+            ProcessFields(fields, methodStorage, currentType);
             for (Int32 index = 0; index < overloadings.Count; ++index)
-                ProcessOverloadingCase(overloadings[index], index, methodStorage, currentTypeData);
+                ProcessOverloadingCase(overloadings[index], index, currentType, methodStorage);
             methodStorage.AddBodyLine("else:");
             methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments", true);
         }
 
-        private void ProcessMethods(IDictionary<String, IList<MethodData>> methods, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessMethods(IDictionary<String, IList<MethodData>> methods, ClassStorage classStorage, CurrentProcessingType currentType)
         {
             foreach (String name in methods.Keys.Order())
             {
@@ -206,10 +206,10 @@ namespace SimplePythonPorter.Converter
                 switch (overloads.Count)
                 {
                     case 1:
-                        ProcessNonOverloadingMethod(overloads[0], classStorage, currentTypeData);
+                        ProcessNonOverloadingMethod(overloads[0], classStorage, currentType);
                         break;
                     case > 1:
-                        ProcessOverloadingMethod(overloads, classStorage, currentTypeData);
+                        ProcessOverloadingMethod(overloads, classStorage, currentType);
                         break;
                     default:
                         throw new InvalidOperationException($"Bad methods data for method named \"{name}\"");
@@ -217,7 +217,7 @@ namespace SimplePythonPorter.Converter
             }
         }
 
-        private void ProcessNonOverloadingMethod(MethodData data, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessNonOverloadingMethod(MethodData data, ClassStorage classStorage, CurrentProcessingType currentType)
         {
             String[] parameters = data
                 .Symbol
@@ -230,12 +230,12 @@ namespace SimplePythonPorter.Converter
             if (data.Symbol.IsStatic)
                 methodStorage.AddDecorator(PythonSpecificDef.StaticMethod);
             if (data.Symbol.Parameters.Length > 0)
-                ProcessNonOverloadingBodyWithParameters(data, methodStorage, currentTypeData);
+                ProcessNonOverloadingBodyWithParameters(data, currentType, methodStorage);
             else
-                ProcessNonOverloadingBodyWithoutParameters(data, methodStorage);
+                ProcessNonOverloadingBodyWithoutParameters(data, currentType, methodStorage);
         }
 
-        private void ProcessOverloadingMethod(IList<MethodData> overloadings, ClassStorage classStorage, CurrentTypeData currentTypeData)
+        private void ProcessOverloadingMethod(IList<MethodData> overloadings, ClassStorage classStorage, CurrentProcessingType currentType)
         {
             String destName = overloadings[0].DestName;
             Boolean isStatic = overloadings[0].Symbol.IsStatic;
@@ -244,18 +244,18 @@ namespace SimplePythonPorter.Converter
             if (isStatic)
                 methodStorage.AddDecorator(PythonSpecificDef.StaticMethod);
             for (Int32 index = 0; index < overloadings.Count; ++index)
-                ProcessOverloadingCase(overloadings[index], index, methodStorage, currentTypeData);
+                ProcessOverloadingCase(overloadings[index], index, currentType, methodStorage);
             methodStorage.AddBodyLine("else:");
             methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments", true);
         }
 
-        private void ProcessOverloadingCase(MethodData data, Int32 overloadingIndex, MethodStorage methodStorage, CurrentTypeData currentTypeData)
+        private void ProcessOverloadingCase(MethodData data, Int32 overloadingIndex, CurrentProcessingType currentType, MethodStorage methodStorage)
         {
             String[] argumentTypeChecks = new String[data.Symbol.Parameters.Length + 1];
             argumentTypeChecks[0] = $"(len(args) == {data.Symbol.Parameters.Length})";
             for (Int32 index = 0; index < data.Symbol.Parameters.Length; ++index)
             {
-                argumentTypeChecks[index + 1] = GenerateArgumentTypeCheck($"args[{index}]", data.Symbol.Parameters[index].Type, methodStorage, currentTypeData);
+                argumentTypeChecks[index + 1] = GenerateArgumentTypeCheck($"args[{index}]", data.Symbol.Parameters[index].Type, methodStorage, currentType);
             }
             String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
             methodStorage.AddBodyLine($"{(overloadingIndex == 0 ? "if" : "elif")} {argumentTypeCheck}:");
@@ -269,31 +269,31 @@ namespace SimplePythonPorter.Converter
                     methodStorage.AddBodyLine($"{parameterName} = args[{index}]");
                 }
             }
-            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
+            ProcessBody(data.Declaration.Body, data.Symbol, currentType, methodStorage);
             methodStorage.DecreaseLocalIndentation();
         }
 
-        private void ProcessNonOverloadingBodyWithParameters(MethodData data, MethodStorage methodStorage, CurrentTypeData currentTypeData)
+        private void ProcessNonOverloadingBodyWithParameters(MethodData data, CurrentProcessingType currentType, MethodStorage methodStorage)
         {
             String[] argumentTypeChecks = data.Symbol
                 .Parameters
-                .Select(parameter => GenerateArgumentTypeCheck(parameter.Name, parameter.Type, methodStorage, currentTypeData))
+                .Select(parameter => GenerateArgumentTypeCheck(parameter.Name, parameter.Type, methodStorage, currentType))
                 .ToArray();
             String argumentTypeCheck = String.Join(" and ", argumentTypeChecks);
             methodStorage.AddBodyLine($"if {argumentTypeCheck}:");
             methodStorage.IncreaseLocalIndentation();
-            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
+            ProcessBody(data.Declaration.Body, data.Symbol, currentType, methodStorage);
             methodStorage.DecreaseLocalIndentation();
             methodStorage.AddBodyLine("else:");
             methodStorage.AddException("system.InvalidOperationException", "Unrecognized combination of arguments", true);
         }
 
-        private void ProcessNonOverloadingBodyWithoutParameters(MethodData data, MethodStorage methodStorage)
+        private void ProcessNonOverloadingBodyWithoutParameters(MethodData data, CurrentProcessingType currentType, MethodStorage methodStorage)
         {
-            ProcessBody(data.Declaration.Body, data.Symbol, methodStorage);
+            ProcessBody(data.Declaration.Body, data.Symbol, currentType, methodStorage);
         }
 
-        private String GenerateArgumentTypeCheck(String parameterName, ITypeSymbol parameterType, MethodStorage methodStorage, CurrentTypeData currentTypeData)
+        private String GenerateArgumentTypeCheck(String parameterName, ITypeSymbol parameterType, MethodStorage methodStorage, CurrentProcessingType currentType)
         {
             if (parameterType.IsBoolean())
                 return $"isinstance({parameterName}, bool)";
@@ -309,11 +309,13 @@ namespace SimplePythonPorter.Converter
             String sourceNamespaceName = parameterType.ContainingNamespace.ToString()!;
             String destTypeName = _appData.NameTransformer.TransformTypeName(sourceTypeName);
             String destModuleName = _appData.NameTransformer.TransformNamespaceName(sourceNamespaceName);
-            methodStorage.ImportStorage.AddImport(currentTypeData, destModuleName);
+            if (currentType.ModuleName.Equals(destModuleName))
+                return $"(isinstance({parameterName}, {destTypeName}) or {parameterName} is None)";
+            methodStorage.ImportStorage.AddImport(destModuleName);
             return $"(isinstance({parameterName}, {destModuleName}.{destTypeName}) or {parameterName} is None)";
         }
 
-        private void ProcessBody(BlockSyntax? blockSyntax, IMethodSymbol symbol, MethodStorage methodStorage)
+        private void ProcessBody(BlockSyntax? blockSyntax, IMethodSymbol symbol, CurrentProcessingType currentType, MethodStorage methodStorage)
         {
             if (symbol.IsAbstract)
             {
@@ -322,24 +324,13 @@ namespace SimplePythonPorter.Converter
             }
             if (blockSyntax == null)
                 return;
-            StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, methodStorage, _appData);
+            StatementConverterVisitor statementConverter = new StatementConverterVisitor(_model, _appData, currentType, methodStorage);
             statementConverter.VisitBlock(blockSyntax);
         }
 
         private readonly SemanticModel _model;
         private readonly FileStorage _currentFile;
         private readonly AppData _appData;
-    }
-
-    internal record CurrentTypeData(TypeDeclarationSyntax Type, String ContainedNamespace, String ModuleName)
-    {
-        public static CurrentTypeData Create(TypeDeclarationSyntax type, SemanticModel model, AppData appData)
-        {
-            ITypeSymbol typeSymbol = model.GetDeclaredSymbol(type)!;
-            String containedNamespace = typeSymbol.ContainingNamespace.ToString()!;
-            String moduleName = appData.NameTransformer.TransformNamespaceName(containedNamespace);
-            return new CurrentTypeData(type, containedNamespace, moduleName);
-        }
     }
 
     internal record MethodData(String DestName, BaseMethodDeclarationSyntax Declaration, IMethodSymbol Symbol)
@@ -456,16 +447,6 @@ namespace SimplePythonPorter.Converter
             if (type.IsString())
                 return "\"\"";
             return "None";
-        }
-    }
-
-    internal static class ImportStorageHelper
-    {
-        public static void AddImport(this ImportStorage importStorage, CurrentTypeData currentType, String module, String alias = "")
-        {
-            if (currentType.ModuleName.Equals(module))
-                return;
-            importStorage.AddImport(module, alias);
         }
     }
 

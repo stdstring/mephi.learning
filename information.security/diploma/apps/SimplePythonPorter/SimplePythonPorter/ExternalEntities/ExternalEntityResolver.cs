@@ -105,6 +105,8 @@ namespace SimplePythonPorter.ExternalEntities
             String sourceNamespace = typeSymbol.ContainingNamespace.ToString()!;
             String destTypeName = _appData.NameTransformer.TransformTypeName(sourceTypeName);
             String destModuleName = _appData.NameTransformer.TransformNamespaceName(sourceNamespace);
+            if (_settings.CurrentType.ModuleName.Equals(destModuleName))
+                return new MemberResolveData($"{destTypeName}({String.Join(", ", argumentsRepresentation.Values)})");
             ImportData importData = new ImportData();
             importData.AddImport(destModuleName);
             String ctorCall = $"{destModuleName}.{destTypeName}({String.Join(", ", argumentsRepresentation.Values)})";
