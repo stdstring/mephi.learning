@@ -124,7 +124,9 @@
 
         protected override Boolean Check()
         {
-            return (xCenter >= 0) && (yCenter >= 0) && (radius > 0);
+            Int32 minX = xCenter - radius;
+            Int32 minY = yCenter - radius;
+            return (xCenter >= 0) && (yCenter >= 0) && (radius > 0) && (minX >= 0) && (minY >= 0);
         }
 
         public override String GetRepresentation()
@@ -249,7 +251,7 @@
             storage.AddPoint(10, 10);
             storage.AddMove(100,100);
             storage.AddRectangle(12,14,55);
-            storage.AddCircle(6,6,77);
+            storage.AddCircle(16,16,13);
             IPainter simplePainter = new SimplePainter();
             simplePainter.Paint(storage.GetSteps());
         }
