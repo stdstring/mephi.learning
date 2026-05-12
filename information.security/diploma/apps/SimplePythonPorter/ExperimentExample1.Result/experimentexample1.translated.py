@@ -2,16 +2,18 @@
 
 import system
 import system.collections.generic
-from abc import ABC
+import abc
 
 
-class Step(ABC):
+class Step(abc.ABC):
     def __init__(self):
-        pass
+        raise system.InvalidOperationException("Abstract method call")
 
+    @abc.abstractmethod
     def _Check(self):
         raise system.InvalidOperationException("Abstract method call")
 
+    @abc.abstractmethod
     def GetRepresentation(self):
         raise system.InvalidOperationException("Abstract method call")
 
@@ -125,7 +127,6 @@ class Circle(Step):
 
 class StepStorage:
     def __init__(self):
-        self.__steps = None
         self.__steps = system.collections.generic.List()
 
     def AddCircle(self, *args):
@@ -205,7 +206,8 @@ class StepStorage:
     def GetSteps(self):
         return self.__steps
 
-class IPainter(ABC):
+class IPainter(abc.ABC):
+    @abc.abstractmethod
     def Paint(self, steps):
         if (isinstance(steps, system.collections.generic.IList) or steps is None):
             raise system.InvalidOperationException("Abstract method call")

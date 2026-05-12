@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from abc import ABC
+import abc
 
-class Step(ABC):
+class Step(abc.ABC):
+    @abc.abstractmethod
     def _Check(self):
         pass
 
+    @abc.abstractmethod
     def GetRepresentation(self):
         pass
 
@@ -140,7 +142,8 @@ class StepStorage:
         return self.__steps
 
 
-class IPainter(ABC):
+class IPainter(abc.ABC):
+    @abc.abstractmethod
     def Paint(self, steps):
         pass
 
