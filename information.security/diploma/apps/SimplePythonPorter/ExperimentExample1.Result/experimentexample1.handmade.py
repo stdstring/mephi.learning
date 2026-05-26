@@ -35,7 +35,7 @@ class Color(Step):
 
     def GetRepresentation(self):
         if not self._Check():
-            raise system.ValueError("Bad data")
+            raise ValueError("Bad data")
         return f"color({self.__color})"
 
 
@@ -71,7 +71,7 @@ class Rectangle(Step):
 
     def GetRepresentation(self):
         if not self._Check():
-            raise system.InvalidOperationException("Bad data")
+            raise ValueError("Bad data")
         return f"rectangle({self.__xLeft},{self.__yTop},{self.__xRight},{self.__yBottom})"
 
 

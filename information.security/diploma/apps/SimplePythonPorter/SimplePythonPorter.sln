@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplePythonPorter", "Simpl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExperimentExample1", "ExperimentExample1\ExperimentExample1.csproj", "{8AAC6D1E-F433-4C01-8CD4-41AC5948F90D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplePythonPorterApp", "SimplePythonPorterApp\SimplePythonPorterApp.csproj", "{B47C68CD-C22F-4108-BD1D-06303063A9CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplePythonPorter.Tests", "SimplePythonPorter.Tests\SimplePythonPorter.Tests.csproj", "{799FE73D-F3B4-4E57-90DF-A621FE0FB679}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{8AAC6D1E-F433-4C01-8CD4-41AC5948F90D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AAC6D1E-F433-4C01-8CD4-41AC5948F90D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AAC6D1E-F433-4C01-8CD4-41AC5948F90D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B47C68CD-C22F-4108-BD1D-06303063A9CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B47C68CD-C22F-4108-BD1D-06303063A9CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B47C68CD-C22F-4108-BD1D-06303063A9CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B47C68CD-C22F-4108-BD1D-06303063A9CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{799FE73D-F3B4-4E57-90DF-A621FE0FB679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799FE73D-F3B4-4E57-90DF-A621FE0FB679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799FE73D-F3B4-4E57-90DF-A621FE0FB679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799FE73D-F3B4-4E57-90DF-A621FE0FB679}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

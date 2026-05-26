@@ -7,7 +7,7 @@ using SimplePythonPorter.Utils;
 
 namespace SimplePythonPorter.Processor
 {
-    internal class ProjectProcessor
+    public class ProjectProcessor
     {
         public ProjectProcessor(AppData appData)
         {

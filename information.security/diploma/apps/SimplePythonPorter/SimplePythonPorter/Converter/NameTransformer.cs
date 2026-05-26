@@ -3,7 +3,7 @@ using SimplePythonPorter.Common;
 
 namespace SimplePythonPorter.Converter
 {
-    internal enum MemberModifier
+    public enum MemberModifier
     {
         Public,
         Protected,
@@ -24,7 +24,7 @@ namespace SimplePythonPorter.Converter
         }
     }
 
-    internal class NameTransformer
+    public class NameTransformer
     {
         public String TransformFileObjectName(String fileObjectName)
         {
